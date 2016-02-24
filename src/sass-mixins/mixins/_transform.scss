@@ -1,0 +1,62 @@
+@mixin backface-visibility($visibility) {
+    -webkit-backface-visibility: $visibility;
+    backface-visibility: $visibility;
+}
+
+@mixin transform($val) {
+    -webkit-transform: $val;
+    transform: $val;
+}
+
+@mixin transform-origin($left, $top) {
+    -webkit-transform-origin: $left $top;
+    transform-origin: $left $top;
+}
+
+@mixin transform-origin-left($left) {
+    -webkit-transform-origin: $left 50%;
+    transform-origin: $left 50%;
+}
+
+@mixin transform-origin-top($top) {
+    -webkit-transform-origin: 50% $top;
+    transform-origin: 50% $top;
+}
+
+@mixin transform-style($style) {
+    -webkit-transform-style: $style;
+    transform-style: $style;
+}
+
+@mixin rotate($degrees) {
+    @include transform(rotate($degrees));
+}
+
+@mixin rotateX($degree) {
+    @include transform(rotateX($degree));
+}
+
+@mixin rotateY($degree) {
+    @include transform(rotateY($degree));
+}
+
+@mixin scale($ratio) {
+    @include transform(scale($ratio));
+}
+
+@mixin skew($x, $y) {
+    @include backface-visibility(hidden);
+    @include transform(skew($x, $y));
+}
+
+@mixin translate3d($x, $y, $z) {
+    @include transform(translate3d($x, $y, $z));
+}
+
+@mixin translate($x, $y) {
+    @include transform(translate($x, $y));
+}
+
+@mixin translateZ($z) {
+    @include transform(translateZ($z));
+}
