@@ -1,11 +1,11 @@
 <template>
-  <div class="v-img" v-bind:class="{'v-img-loading': loading, 'v-img-loaded': !loading && loaded, 'v-img-error': !loading && error}">
+  <div class="v-img" v-bind:class="{'v-img-loading': loading, 'v-img-loaded': !loading && loaded, 'v-img-error': !loading && error, 'v-img-cache': cache}">
     <div class="v-img-spinner" v-if="loading" v-bind:style="spinnerStyle"></div>
     <p class="v-img-msg" v-if="!loading && error" transition="img">加载失败</p>
 
     <template v-if="!loading && loaded">
       <img v-if="adaptive" v-bind:src="src" transition="img" alt="">
-      <div class="img" v-if="!adaptive" transition="img" v-bind:style="{'background-image': src}"></div>
+      <div class="img" v-if="!adaptive" transition="img" v-bind:style="imgStyle"></div>
     </template>
   </div>
 </template>
@@ -13,24 +13,46 @@
 <script>
   export default {
     props: {
-      avatar: {
-        type: Boolean,
-        default: false
+      src: {
+        type: String,
+        required: true
       },
       adaptive: {
         type: Boolean,
         default: false
       },
-      src: {
-        type: String,
-        required: true
+      lazy: {
+        type: Boolean,
+        default: false
+      },
+      threshold: {
+        type: Number,
+        default: 0
       },
       spinnerSize: {
         type: String,
         default: '50px'
+      },
+      avatar: {
+        type: Boolean,
+        default: false
+      }
+    },
+    data () {
+      return {
+        loading: false,
+        loaded: false,
+        error: false,
+        cache: false
       }
     },
     computed: {
+      imgStyle () {
+        return {
+          'background-image': 'url("' + this.src + '")'
+        }
+      },
+
       spinnerStyle () {
         let size = parseInt(this.spinnerSize, 10)
         let unit = this.spinnerSize.replace(size, '')
@@ -43,25 +65,51 @@
         }
       }
     },
-    data () {
-      return {
-        loading: false,
-        loaded: false,
-        error: false
+    watch: {
+      src () {
+        console.log(arguments)
+        this.load()
       }
     },
     ready () {
-      this.loading = true
-      this.loaded = false
-      this.error = false
+      if (this.lazy) {
+        if (window.addEventListener) {
+          window.addEventListener('scroll', onScroll.bind(this), false)
+        }
+      } else {
+        this.load()
+      }
 
-      let img = document.createElement('img')
-      img.src = this.src
+      function onScroll () {
+        if (!this.loading && !this.loaded && !this.error && this.isInViewport()) {
+          this.load()
 
-      img.onload = this.onSuccess.bind(this)
-      img.onerror = this.onError.bind(this)
+          if (window.removeEventListener) {
+            window.removeEventListener('scroll', onScroll)
+          }
+        }
+      }
     },
     methods: {
+      load () {
+        this.loading = true
+        this.loaded = false
+        this.error = false
+
+        let img = document.createElement('img')
+        img.src = this.src
+
+        if (img.complete) {
+          this.cache = true
+          this.onSuccess()
+        } else {
+          img.onload = this.onSuccess.bind(this)
+          img.onerror = this.onError.bind(this)
+        }
+
+        img = null
+      },
+
       onSuccess () {
         this.loading = false
         this.loaded = true
@@ -70,6 +118,46 @@
       onError () {
         this.loading = false
         this.error = true
+      },
+
+      isInViewport () {
+        let winWidth = window.innerWidth
+        let winHeight = window.innerHeight
+
+        let winScrollTop = window.pageYOffset
+        let winScrollLeft = window.pageXOffset
+
+        let offset = this.getOffset()
+        let width = this.$el.innerWidth
+        let height = this.$el.innerHeight
+
+        let isTopOfScreen = winScrollTop >= offset.top + height - this.threshold
+        let isRightOfScreen = winWidth + winScrollLeft <= offset.left - this.threshold
+        let isBottomOfScreen = winHeight + winScrollTop <= offset.top - this.threshold
+        let isLeftOfScreen = winScrollLeft >= offset.left + width - this.threshold
+
+        return !isTopOfScreen && !isRightOfScreen && !isBottomOfScreen && !isLeftOfScreen
+      },
+
+      getOffset () {
+        let el = this.$el
+
+        if (!el.getClientRects().length) {
+          return { top: 0, left: 0 }
+        }
+
+        let rect = el.getBoundingClientRect()
+
+        if (rect.width || rect.height) {
+          let docElem = el.ownerDocument.documentElement
+
+          return {
+            top: rect.top + window.pageYOffset - docElem.clientTop,
+            left: rect.left + window.pageXOffset - docElem.clientLeft
+          }
+        }
+
+        return rect
       }
     }
   }
@@ -104,6 +192,7 @@
 
     &-error {
       @include align-items(center);
+      background-color: #efefef;
       @include display-flex();
       @include justify-content(center);
     }
@@ -122,6 +211,7 @@
 
     &-msg {
       color: #666;
+      margin-bottom: 0;
       text-align: center;
     }
 
@@ -133,7 +223,7 @@
     }
 
     .img {
-      background-color: #d6d7d8;
+      background-color: transparent;
       background-position: 50% 50%;
       background-repeat: no-repeat;
       background-size: cover;
@@ -144,13 +234,15 @@
       width: 100%;
     }
 
-    .img-transition {
-      opacity: 1;
-      transition: opacity .3s ease;
-    }
+    &:not(&-cache) {
+      .img-transition {
+        opacity: 1;
+        @include transition(opacity .3s ease);
+      }
 
-    .img-enter {
-      opacity: 0;
+      .img-enter {
+        opacity: 0;
+      }
     }
   }
 

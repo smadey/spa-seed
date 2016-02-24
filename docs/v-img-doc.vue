@@ -5,11 +5,11 @@
     </h1>
 
     <div class="bs-example">
-      <v-img src="http://www.ibabycenter.com/front/images/index/1.png" adaptive></v-img>
+      <v-img src="http://cn.vuejs.org/images/logo.png" adaptive lazy></v-img>
     </div>
 
     <pre><code class="language-markup"><script type="language-mark-up">
-<v-img src="http://www.ibabycenter.com/front/images/index/1.png" adaptive></v-img>
+<v-img src="http://cn.vuejs.org/images/logo.png" adaptive lazy></v-img>
     </script></code></pre>
 
     <h2>Options</h2>
@@ -28,6 +28,24 @@
           <td><code>String</code>(<code>required</code>)</td>
           <td><code>undefined</code></td>
           <td>图片地址</td>
+        </tr>
+        <tr>
+          <td>adaptive</td>
+          <td><code>Boolean</code></td>
+          <td><code>false</code></td>
+          <td>是否(以img标签)自动调整大小</td>
+        </tr>
+        <tr>
+          <td>lazy</td>
+          <td><code>Boolean</code></td>
+          <td><code>false</code></td>
+          <td>是否延迟加载</td>
+        </tr>
+        <tr>
+          <td>threshold</td>
+          <td><code>Number</code></td>
+          <td><code>0</code></td>
+          <td>延迟加载提前量</td>
         </tr>
         <tr>
           <td>spinnerSize</td>
