@@ -68,7 +68,7 @@ if (process.env.NODE_ENV === 'production') {
   module.exports.entry = {
     'vue-components': './src/index.js'
   }
-  module.exports.output.library = 'vue-components'
+  module.exports.output.library = 'vc'
   module.exports.output.libraryTarget = 'umd'
   module.exports.devtool = 'source-map'
   // http://vuejs.github.io/vue-loader/workflow/production.html

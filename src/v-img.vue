@@ -1,5 +1,5 @@
 <template>
-  <div class="v-img" v-bind:class="{'v-img-loading': loading, 'v-img-loaded': !loading && loaded, 'v-img-error': !loading && error, 'v-img-cache': cache}">
+  <div class="v-img" v-bind:class="imgClass">
     <div class="v-img-spinner" v-if="loading" v-bind:style="spinnerStyle"></div>
     <p class="v-img-msg" v-if="!loading && error" transition="img">加载失败</p>
 
@@ -11,6 +11,8 @@
 </template>
 
 <script>
+  import dom from './utils/dom.js'
+
   export default {
     props: {
       src: {
@@ -27,7 +29,7 @@
       },
       threshold: {
         type: Number,
-        default: 0
+        default: 50
       },
       spinnerSize: {
         type: String,
@@ -47,6 +49,15 @@
       }
     },
     computed: {
+      imgClass () {
+        return {
+          'v-img-loading': this.loading,
+          'v-img-loaded': !this.loading && this.loaded,
+          'v-img-error': !this.loading && this.error,
+          'v-img-cache': this.cache
+        }
+      },
+
       imgStyle () {
         return {
           'background-image': 'url("' + this.src + '")'
@@ -67,26 +78,21 @@
     },
     watch: {
       src () {
-        console.log(arguments)
         this.load()
       }
     },
     ready () {
       if (this.lazy) {
-        if (window.addEventListener) {
-          window.addEventListener('scroll', onScroll.bind(this), false)
-        }
+        dom.on(window, 'scroll', onScroll.bind(this))
       } else {
         this.load()
       }
 
       function onScroll () {
-        if (!this.loading && !this.loaded && !this.error && this.isInViewport()) {
+        if (!this.loading && !this.loaded && !this.error && dom.get(this.$el).isInViewport(this.threshold)) {
           this.load()
 
-          if (window.removeEventListener) {
-            window.removeEventListener('scroll', onScroll)
-          }
+          dom.off(window, 'scroll', onScroll)
         }
       }
     },
@@ -118,46 +124,6 @@
       onError () {
         this.loading = false
         this.error = true
-      },
-
-      isInViewport () {
-        let winWidth = window.innerWidth
-        let winHeight = window.innerHeight
-
-        let winScrollTop = window.pageYOffset
-        let winScrollLeft = window.pageXOffset
-
-        let offset = this.getOffset()
-        let width = this.$el.innerWidth
-        let height = this.$el.innerHeight
-
-        let isTopOfScreen = winScrollTop >= offset.top + height - this.threshold
-        let isRightOfScreen = winWidth + winScrollLeft <= offset.left - this.threshold
-        let isBottomOfScreen = winHeight + winScrollTop <= offset.top - this.threshold
-        let isLeftOfScreen = winScrollLeft >= offset.left + width - this.threshold
-
-        return !isTopOfScreen && !isRightOfScreen && !isBottomOfScreen && !isLeftOfScreen
-      },
-
-      getOffset () {
-        let el = this.$el
-
-        if (!el.getClientRects().length) {
-          return { top: 0, left: 0 }
-        }
-
-        let rect = el.getBoundingClientRect()
-
-        if (rect.width || rect.height) {
-          let docElem = el.ownerDocument.documentElement
-
-          return {
-            top: rect.top + window.pageYOffset - docElem.clientTop,
-            left: rect.left + window.pageXOffset - docElem.clientLeft
-          }
-        }
-
-        return rect
       }
     }
   }
@@ -234,7 +200,7 @@
       width: 100%;
     }
 
-    &:not(&-cache) {
+    &:not([class*='cache']) {
       .img-transition {
         opacity: 1;
         @include transition(opacity .3s ease);

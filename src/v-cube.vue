@@ -1,21 +1,26 @@
 <template>
-  <div class="v-cube" v-bind:class="{ready: ready, rotating: animation == 'rotating', 'rotating-reverse': animation == 'rotating-reverse'}" v-bind:style="cubeStyle">
-    <div class="face bottom"></div>
-    <div class="face left" v-bind:style="leftStyle"></div>
-    <div class="face back" v-bind:style="backStyle"></div>
+  <div class="v-cube" v-bind:class="cubeClass" v-bind:style="cubeStyle">
+    <div class="v-cube-inner" v-bind:style="innerStyle">
+      <div class="face bottom"></div>
+      <div class="face left" v-bind:style="lrStyle"></div>
+      <div class="face back" v-bind:style="bfStyle"></div>
 
-    <div class="v-cube-inner">
-      <div class="face right" v-bind:style="rightStyle"></div>
-      <div class="face front" v-bind:style="frontStyle"></div>
+      <div class="floor" v-if="floor"></div>
     </div>
 
-    <div class="face top" v-bind:style="topStyle"></div>
-
-    <div class="floor" v-if="floor"></div>
+    <div class="v-cube-inner" v-bind:style="innerStyle">
+      <div class="v-cube-inner">
+        <div class="face right" v-bind:style="lrStyle"></div>
+        <div class="face front" v-bind:style="bfStyle"></div>
+        <div class="face top" v-bind:style="topStyle"></div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+  import fns from './utils/fns'
+
   export default {
     props: {
       size: {
@@ -48,14 +53,28 @@
       }
     },
     computed: {
+      cubeClass () {
+        return {
+          'ready': this.ready,
+          'rotating': this.animation === 'rotating',
+          'rotating-reverse': this.animation === 'rotating-reverse'
+        }
+      },
+
       cubeStyle () {
         return {
-          'width': this.length + 'px',
-          'height': this.width + 'px'
+          height: this.width + 'px',
+          width: this.length + 'px'
         }
       },
 
-      leftStyle () {
+      innerStyle () {
+        return {
+          transform: 'translateZ(-' + this.height / 2 + 'px)'
+        }
+      },
+
+      lrStyle () {
         if (this.ready) {
           return {
             width: this.height + 'px'
@@ -63,23 +82,7 @@
         }
       },
 
-      backStyle () {
-        if (this.ready) {
-          return {
-            height: this.height + 'px'
-          }
-        }
-      },
-
-      rightStyle () {
-        if (this.ready) {
-          return {
-            width: this.height + 'px'
-          }
-        }
-      },
-
-      frontStyle () {
+      bfStyle () {
         if (this.ready) {
           return {
             height: this.height + 'px'
@@ -90,7 +93,7 @@
       topStyle () {
         if (this.ready) {
           return {
-            'transform': 'translateZ(' + this.height + 'px)'
+            transform: 'translateZ(' + this.height + 'px)'
           }
         }
       }
@@ -115,11 +118,7 @@
       if (this.initialized) {
         this.ready = true
       } else {
-        if (window.requestAnimationFrame) {
-          window.requestAnimationFrame(() => this.ready = true)
-        } else {
-          setTimeout(() => this.ready = true, 0)
-        }
+        fns.asap(() => this.ready = true, true)
       }
     }
   }
@@ -148,6 +147,7 @@
 
   .v-cube {
     height: 100%;
+    margin: auto;
     position: relative;
     @include transform(rotateX(54.5deg) rotateZ(45deg));
     @include transform-style(preserve-3d);
@@ -164,12 +164,17 @@
     &-inner {
       height: 100%;
       position: absolute;
-      @include transform(rotateZ(-180deg));
       @include transform-style(preserve-3d);
       width: 100%;
+
+      & > & {
+        @include transform(rotateZ(-180deg));
+      }
     }
 
     .face {
+      // @include backface-visibility(hidden);
+      background: radial-gradient(transparent 30%, rgba(0, 0, 0, .05) 100%);
       display: block;
       height: 100%;
       position: absolute;
@@ -177,19 +182,25 @@
       width: 100%;
 
       &:after {
-        @include backface-visibility(hidden);
-        background-color: rgba(0, 0, 0, .2);
-        border: 1px solid rgba(0, 0, 0, .2);
+        background-color: rgba(0, 0, 0, .05);
+        border: 1px solid rgba(0, 0, 0, .05);
         content: '';
         display: block;
-        height: 100%;
+        left: -50%;
+        height: 200%;
         position: absolute;
-        width: 100%;
+        @include scale(.5);
+        top: -50%;
+        width: 200%;
       }
+    }
 
-      &:not(.bottom) {
-        background: radial-gradient(transparent 30%, rgba(0, 0, 0, .1) 100%);
-      }
+    .back, .front {
+      @include transform-origin-top(0%);
+    }
+
+    .left, .right {
+      @include transform-origin-left(0%);
     }
 
     .floor {
@@ -201,22 +212,15 @@
       width: 100%;
     }
 
-    .front {
-      @include transform-origin-top(0%);
-    }
-
     .right {
-      @include transform-origin-left(0%);
       @include transition-delay(.3s);
     }
 
     .back {
-      @include transform-origin-top(0%);
       @include transition-delay(.6s);
     }
 
     .left {
-      @include transform-origin-left(0%);
       @include transition-delay(.9s);
     }
 
@@ -225,19 +229,11 @@
     }
 
     &.ready {
-      .front {
+      .back, .front {
         @include rotateX(90deg);
       }
 
-      .right {
-        @include rotateY(-90deg);
-      }
-
-      .back {
-        @include rotateX(90deg);
-      }
-
-      .left {
+      .left, .right {
         @include rotateY(-90deg);
       }
     }

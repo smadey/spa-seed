@@ -87,24 +87,21 @@
 
   #v-cube .cubes {
     height: 200px;
-    margin: 80px auto 30px;
+    margin: 30px auto 80px;
     position: relative;
     width: 200px;
 
     .v-cube {
+      left: 0;
       position: absolute;
+      right: 0;
 
-      &:first-child {
-        top: -10px;
+      &:nth-child(2) {
+        top: 9px;
       }
 
-      &:not(:first-child) {
-        left: 50%;
-        margin-left: -50px;
-      }
-
-      &:last-child {
-        top: 40%;
+      &:nth-child(3) {
+        bottom: 9px;
       }
     }
   }

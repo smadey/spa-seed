@@ -44,7 +44,7 @@
         <tr>
           <td>threshold</td>
           <td><code>Number</code></td>
-          <td><code>0</code></td>
+          <td><code>50</code></td>
           <td>延迟加载提前量</td>
         </tr>
         <tr>
