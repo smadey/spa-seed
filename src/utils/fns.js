@@ -7,7 +7,7 @@ const fns = {
       let n = obj.length
 
       while (i < n) {
-        itemVal = fn.call(null, obj[i], i)
+        itemVal = fn(obj[i], i)
 
         if (stopVal !== undefined && itemVal === stopVal) {
           break
@@ -18,7 +18,7 @@ const fns = {
     } else if (obj) {
       for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
-          itemVal = fn.call(null, obj[key], key)
+          itemVal = fn(obj[key], key)
 
           if (stopVal !== undefined && itemVal === stopVal) {
             break

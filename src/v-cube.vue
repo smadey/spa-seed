@@ -63,21 +63,21 @@
 
       cubeStyle () {
         return {
-          height: this.width + 'px',
-          width: this.length + 'px'
+          height: `${this.width}px`,
+          width: `${this.length}px`
         }
       },
 
       innerStyle () {
         return {
-          transform: 'translateZ(-' + this.height / 2 + 'px)'
+          transform: `translateZ(-${this.height / 2}px)`
         }
       },
 
       lrStyle () {
         if (this.ready) {
           return {
-            width: this.height + 'px'
+            width: `${this.height}px`
           }
         }
       },
@@ -85,7 +85,7 @@
       bfStyle () {
         if (this.ready) {
           return {
-            height: this.height + 'px'
+            height: `${this.height}px`
           }
         }
       },
@@ -93,7 +93,7 @@
       topStyle () {
         if (this.ready) {
           return {
-            transform: 'translateZ(' + this.height + 'px)'
+            transform: `translateZ(${this.height}px)`
           }
         }
       }

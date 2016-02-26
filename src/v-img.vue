@@ -60,7 +60,7 @@
 
       imgStyle () {
         return {
-          'background-image': 'url("' + this.src + '")'
+          'background-image': `url("${this.src}")`
         }
       },
 

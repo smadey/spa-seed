@@ -5,14 +5,11 @@ const dom = {
     let $el = el.length ? el : [el]
 
     fns.each(dom, (fn, key) => {
-      $el[key] = function () {
-        let args = [].slice.call(arguments, 0)
+      $el[key] = (...args) => {
         let returnVal
 
-        args.unshift(el)
-
         fns.each($el, (el) => {
-          returnVal = fn.apply(el, args)
+          returnVal = fn(el, ...args)
 
           if (returnVal !== undefined) {
             return false
