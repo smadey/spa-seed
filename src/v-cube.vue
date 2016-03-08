@@ -19,7 +19,7 @@
 </template>
 
 <script>
-  import fns from './utils/fns'
+  import {_} from 'ylib'
 
   export default {
     props: {
@@ -118,7 +118,7 @@
       if (this.initialized) {
         this.ready = true
       } else {
-        fns.asap(() => this.ready = true, true)
+        _.asap(() => this.ready = true)
       }
     }
   }

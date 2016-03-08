@@ -11,7 +11,7 @@
 </template>
 
 <script>
-  import dom from './utils/dom.js'
+  import {_, $} from 'ylib'
 
   export default {
     props: {
@@ -82,18 +82,17 @@
       }
     },
     ready () {
+      let onScroll = _.throttle(() => {
+        if (!this.loading && $(this.$el).isInViewport(this.threshold)) {
+          $(window).off('scroll', onScroll)
+          this.load()
+        }
+      }, 200)
+
       if (this.lazy) {
-        dom.on(window, 'scroll', onScroll.bind(this))
+        $(window).on('scroll', onScroll)
       } else {
         this.load()
-      }
-
-      function onScroll () {
-        if (!this.loading && !this.loaded && !this.error && dom.get(this.$el).isInViewport(this.threshold)) {
-          this.load()
-
-          dom.off(window, 'scroll', onScroll)
-        }
       }
     },
     methods: {

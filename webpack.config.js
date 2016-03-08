@@ -6,7 +6,7 @@ module.exports = {
     docs: './docs/index.js'
   },
   output: {
-    path: path.resolve(__dirname, './dist'),
+    path: path.join(__dirname, 'dist'),
     publicPath: '/dist/',
     filename: '[name].js'
   },
@@ -17,36 +17,49 @@ module.exports = {
     preLoaders: [
       {
         test: /\.vue$/,
-        loader: 'eslint',
-        exclude: /node_modules/
+        loader: 'eslint-loader',
+        include: [
+          path.join(__dirname, 'src'),
+          path.join(__dirname, 'docs')
+        ]
       },
       {
         test: /\.js$/,
-        loader: 'eslint',
-        exclude: /node_modules/
+        loader: 'eslint-loader',
+        include: [
+          path.join(__dirname, 'src'),
+          path.join(__dirname, 'docs')
+        ]
       }
     ],
     loaders: [
       {
         test: /\.vue$/,
-        loader: 'vue'
+        loader: 'vue-loader'
       },
       {
         test: /\.css$/,
-        loader: "style-loader!css-loader?root=./docs/"
+        loader: 'style-loader!css-loader?root=./docs/'
       },
       {
         test: /\.js$/,
-        loader: 'babel',
-        exclude: /node_modules/
+        loader: 'babel-loader',
+        include: [
+          path.join(__dirname, 'src'),
+          path.join(__dirname, 'docs')
+        ],
+        query: {
+          presets: ['es2015', 'stage-2'],
+          plugins: ['transform-runtime']
+        }
       },
       {
         test: /\.json$/,
-        loader: 'json'
+        loader: 'json-loader'
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
-        loader: 'url',
+        loader: 'url-loader',
         query: {
           limit: 10000,
           name: '[name].[ext]?[hash]'
