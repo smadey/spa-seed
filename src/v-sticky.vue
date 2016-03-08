@@ -1,6 +1,8 @@
 <template>
-  <div class="v-sticky" v-bind:style="stickyStyle">
-    <slot></slot>
+  <div class="v-sticky">
+    <div class="v-sticky-inner" v-el:inner>
+      <slot></slot>
+    </div>
   </div>
 </template>
 
@@ -10,30 +12,46 @@
   export default {
     props: {
       top: {
-        type: Number
-      }
-    },
-    data () {
-      return {
-        height: ''
-      }
-    },
-    computed: {
-      stickyStyle () {
-        return {
-          height: `${this.height}px`
-        }
+        type: Number,
+        default: 0
       }
     },
     ready () {
-      let el = this.$el
-      let scrollFn = _.throttle(function () {
-        console.log($(this).scrollTop())
-      }, 100)
+      let $window = $(window)
 
-      this.height = $(el).height()
+      let $el = $(this.$el)
+      let $inner = $(this.$els.inner)
 
-      $(window).on('scroll', scrollFn)
+      let scrollFn = _.throttle(() => {
+        $el.height($inner.height())
+
+        if ($el.offset().top - $window.scrollTop() > this.top) {
+          this.setUnfixed()
+        } else {
+          this.setFixed()
+        }
+      }, 1000 / 60)
+
+      $window.on('scroll', scrollFn)
+    },
+    methods: {
+      setUnfixed () {
+        let $inner = $(this.$els.inner)
+
+        if ($inner.css('position') !== 'static') {
+          $inner.css({position: '', top: '', width: ''})
+          this.$dispatch('unfixed')
+        }
+      },
+
+      setFixed () {
+        let $inner = $(this.$els.inner)
+
+        if ($inner.css('top') !== (this.top + 'px')) {
+          $inner.css({position: 'fixed', top: this.top, width: $inner.width()})
+          this.$dispatch('fixed')
+        }
+      }
     }
   }
 </script>
@@ -42,14 +60,18 @@
   @import './sass-mixins/_mixin.scss';
 
   .v-sticky {
-    &:before,
-    &:after {
-      content: '';
-      display: table;
-    }
+    &-inner {
+      z-index: 1;
 
-    &:after {
-      clear: both;
+      &:before,
+      &:after {
+        content: '';
+        display: table;
+      }
+
+      &:after {
+        clear: both;
+      }
     }
   }
 

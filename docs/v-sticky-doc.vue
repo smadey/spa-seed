@@ -5,14 +5,22 @@
     </h1>
 
     <div class="bs-example">
-      <v-sticky>
-        <h1>this is the sticky element</h1>
+      <v-sticky v-on:fixed="onFixed" v-on:unfixed="onUnfixed">
+        <h1>this is the first sticky element</h1>
+      </v-sticky>
+
+      <v-sticky :top="50">
+        <h2>this is the second sticky element</h2>
       </v-sticky>
     </div>
 
     <pre><code class="language-markup"><script type="language-mark-up">
-<v-sticky>
-  <h1>this is the sticky element</h1>
+<v-sticky v-on:fixed="onFixed" v-on:unfixed="onUnfixed">
+  <h1>this is the first sticky element</h1>
+</v-sticky>
+
+<v-sticky :top="50">
+  <h2>this is the second sticky element</h2>
 </v-sticky>
     </script></code></pre>
 
@@ -30,7 +38,7 @@
         <tr>
           <td>top</td>
           <td><code>Number</code></td>
-          <td><code>undefined</code></td>
+          <td><code>0</code></td>
           <td>fixed的top值</td>
         </tr>
       </tbody>
@@ -44,6 +52,15 @@
   export default {
     components: {
       vSticky
+    },
+    methods: {
+      onFixed () {
+        console.log('fixed')
+      },
+
+      onUnfixed () {
+        console.log('unfixed')
+      }
     }
   }
 </script>
@@ -51,7 +68,8 @@
 <style lang="sass">
   @import '../src/sass-mixins/_mixin.scss';
 
-  #v-sticky .v-sticky {
+  #v-sticky {
+    padding-bottom: 200px;
   }
 
 </style>
