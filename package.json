@@ -14,7 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "vue": "^1.0.0",
-    "ylib": "^0.1.2"
+    "ylib": "^0.1.4"
   },
   "devDependencies": {
     "babel-core": "^6.0.0",

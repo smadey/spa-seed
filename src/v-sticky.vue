@@ -8,31 +8,37 @@
 
 <script>
   import {_, $} from 'ylib'
+  import {domEventDestroyers} from './vue-mixins/index'
 
   export default {
+    mixins: [domEventDestroyers],
     props: {
       top: {
         type: Number,
         default: 0
       }
     },
+    data () {
+      return {
+        stoped: false
+      }
+    },
     ready () {
-      let $window = $(window)
+      let scrollFn = _.throttle(this.onScroll, 1000 / 60)
 
-      let $el = $(this.$el)
-      let $inner = $(this.$els.inner)
+      $(window).on('scroll', scrollFn)
 
-      let scrollFn = _.throttle(() => {
-        $el.height($inner.height())
-
-        if ($el.offset().top - $window.scrollTop() > this.top) {
-          this.setUnfixed()
-        } else {
-          this.setFixed()
-        }
-      }, 1000 / 60)
-
-      $window.on('scroll', scrollFn)
+      this.addDomEventDestroyer('windowScroll', () => {
+        $(window).off('scroll', scrollFn)
+      })
+    },
+    events: {
+      'sticky.stop' () {
+        this.stop()
+      },
+      'sticky.resume' () {
+        this.resume()
+      }
     },
     methods: {
       setUnfixed () {
@@ -50,6 +56,33 @@
         if ($inner.css('top') !== (this.top + 'px')) {
           $inner.css({position: 'fixed', top: this.top, width: $inner.width()})
           this.$dispatch('fixed')
+        }
+      },
+
+      stop () {
+        this.stoped = true
+      },
+
+      resume () {
+        this.stoped = false
+      },
+
+      onScroll () {
+        if (this.stoped) {
+          return
+        }
+
+        let $window = $(window)
+
+        let $el = $(this.$el)
+        let $inner = $(this.$els.inner)
+
+        $el.height($inner.height())
+
+        if ($el.offset().top - $window.scrollTop() > this.top) {
+          this.setUnfixed()
+        } else {
+          this.setFixed()
         }
       }
     }

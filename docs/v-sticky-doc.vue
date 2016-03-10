@@ -12,6 +12,9 @@
       <v-sticky :top="50">
         <h2>this is the second sticky element</h2>
       </v-sticky>
+
+      <button v-on:click="stop">停止</button>
+      <button v-on:click="resume">开始</button>
     </div>
 
     <pre><code class="language-markup"><script type="language-mark-up">
@@ -60,6 +63,14 @@
 
       onUnfixed () {
         console.log('unfixed')
+      },
+
+      stop () {
+        this.$broadcast('sticky.stop')
+      },
+
+      resume () {
+        this.$broadcast('sticky.resume')
       }
     }
   }

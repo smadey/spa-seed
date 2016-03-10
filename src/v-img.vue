@@ -12,8 +12,10 @@
 
 <script>
   import {_, $} from 'ylib'
+  import {domEventDestroyers} from './vue-mixins/index'
 
   export default {
+    mixins: [domEventDestroyers],
     props: {
       src: {
         type: String,
@@ -82,19 +84,19 @@
       }
     },
     ready () {
-      let onScroll = _.throttle(() => {
-        if (!this.loading && $(this.$el).isInViewport(this.threshold)) {
-          $(window).off('scroll', onScroll)
-          this.load()
-        }
-      }, 200)
-
       if (this.lazy) {
-        $(window).on('scroll', onScroll)
+        let scrollFn = _.throttle(this.onScroll, 200)
+
+        $(window).on('scroll', scrollFn)
+
+        this.addDomEventDestroyer('windowScroll', () => {
+          $(window).off('scroll', scrollFn)
+        })
       } else {
         this.load()
       }
     },
+
     methods: {
       load () {
         this.loading = true
@@ -123,6 +125,13 @@
       onError () {
         this.loading = false
         this.error = true
+      },
+
+      onScroll () {
+        if (!this.loading && !this.loaded && !this.error && $(this.$el).isInViewport(this.threshold)) {
+          this.execDomEventDestroyer('windowScroll')
+          this.load()
+        }
       }
     }
   }
