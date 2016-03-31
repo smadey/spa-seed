@@ -1,6 +1,17 @@
 var path = require('path')
 var webpack = require('webpack')
 
+var AUTOPREFIXER_BROWSERS = [
+  'Android 2.3',
+  'Android >= 4',
+  'Chrome >= 35',
+  'Firefox >= 31',
+  'Explorer >= 9',
+  'iOS >= 7',
+  'Opera >= 12',
+  'Safari >= 7.1',
+]
+
 module.exports = {
   entry: {
     docs: './docs/index.js'
@@ -39,7 +50,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader?root=./docs/'
+        loader: 'style-loader!css-loader!postcss-loader?root=./docs/'
       },
       {
         test: /\.js$/,
@@ -74,6 +85,9 @@ module.exports = {
   devtool: 'eval-source-map',
   eslint: {
     formatter: require('eslint-friendly-formatter')
+  },
+  postcss: function () {
+    return [require('autoprefixer')({ browsers: AUTOPREFIXER_BROWSERS }), require('precss')];
   }
 }
 

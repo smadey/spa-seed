@@ -1,11 +1,11 @@
 <template>
-  <div class="v-img" v-bind:class="imgClass">
-    <div class="v-img-spinner" v-if="loading" v-bind:style="spinnerStyle"></div>
+  <div class="v-img" v-bind:class="imgClass" v-bind:style="imgSize">
+    <v-spinner v-if="loading" type="bubbles" v-bind:size="computedSpinnerStyle"></v-spinner>
     <p class="v-img-msg" v-if="!loading && error" transition="img">加载失败</p>
 
     <template v-if="!loading && loaded">
       <img v-if="adaptive" v-bind:src="src" transition="img" alt="">
-      <div class="img" v-if="!adaptive" transition="img" v-bind:style="imgStyle"></div>
+      <div class="img" v-if="!adaptive" transition="img" v-bind:style="[imgSize, imgStyle]"></div>
     </template>
   </div>
 </template>
@@ -14,8 +14,13 @@
   import {_, $} from 'ylib'
   import {domEventDestroyers} from './vue-mixins/index'
 
+  import vSpinner from './v-spinner.vue'
+
   export default {
     mixins: [domEventDestroyers],
+    components: {
+      vSpinner
+    },
     props: {
       src: {
         type: String,
@@ -24,6 +29,12 @@
       adaptive: {
         type: Boolean,
         default: false
+      },
+      width: {
+        type: Number
+      },
+      height: {
+        type: Number
       },
       lazy: {
         type: Boolean,
@@ -34,12 +45,8 @@
         default: 50
       },
       spinnerSize: {
-        type: String,
-        default: '50px'
-      },
-      avatar: {
-        type: Boolean,
-        default: false
+        type: Number,
+        default: 50
       }
     },
     data () {
@@ -60,22 +67,37 @@
         }
       },
 
+      imgSize () {
+        if (this.adaptive) {
+          return
+        }
+
+        let style = {}
+
+        if (this.width > 0) {
+          style.width = this.width + 'px'
+        }
+
+        if (this.height > 0) {
+          style.height = this.height + 'px'
+        }
+
+        return style
+      },
+
       imgStyle () {
         return {
           'background-image': `url("${this.src}")`
         }
       },
 
-      spinnerStyle () {
-        let size = parseInt(this.spinnerSize, 10)
-        let unit = this.spinnerSize.replace(size, '')
+      computedSpinnerStyle () {
+        var spinnerSize = this.spinnerSize
 
-        return {
-          'height': size + unit,
-          'margin-left': -size / 2 + unit,
-          'margin-top': -size / 2 + unit,
-          'width': size + unit
-        }
+        spinnerSize = Math.min(spinnerSize, $(this.$el).width() * 0.8)
+        spinnerSize = Math.min(spinnerSize, $(this.$el).height() * 0.8)
+
+        return spinnerSize
       }
     },
     watch: {
@@ -98,18 +120,22 @@
     },
 
     methods: {
-      load () {
-        this.loading = true
-        this.loaded = false
+      load (isForce) {
         this.error = false
 
         let img = document.createElement('img')
         img.src = this.src
 
-        if (img.complete) {
+        if (img.complete && !isForce) {
+          this.loading = false
+          this.loaded = true
+
           this.cache = true
           this.onSuccess()
         } else {
+          this.loading = true
+          this.loaded = false
+
           img.onload = this.onSuccess.bind(this)
           img.onerror = this.onError.bind(this)
         }
@@ -138,19 +164,10 @@
 </script>
 
 <style lang="sass">
-  @import './sass-mixins/_mixin.scss';
-
-  @include keyframe(img-loading) {
-    0% {
-      @include transform(rotate(0deg));
-    }
-    100% {
-      @include transform(rotate(360deg));
-    }
-  }
-
   .v-img {
     height: 100%;
+    margin-left: auto;
+    margin-right: auto;
     position: relative;
     width: 100%;
 
@@ -165,22 +182,23 @@
     }
 
     &-error {
-      @include align-items(center);
+      align-items: center;
       background-color: #efefef;
-      @include display-flex();
-      @include justify-content(center);
+      display: flex;
+      justify-content: center;
     }
 
     &-spinner {
-      @include animation(img-loading 1s infinite linear);
+      animation: v-img-loading 1s infinite linear;
       border-color: rgba(0, 0, 0, .15) rgba(0, 0, 0, .15) #fff;
       border-radius: 50%;
       border-style: solid;
       border-width: 5px;
       left: 50%;
+      max-width: 80%;
       position: absolute;
       top: 50%;
-      @include transform(translateZ(0));
+      transform: translate3d(-50%, -50%, 0) ;
     }
 
     &-msg {
@@ -211,7 +229,7 @@
     &:not([class*='cache']) {
       .img-transition {
         opacity: 1;
-        @include transition(opacity .3s ease);
+        transition: opacity .3s ease;
       }
 
       .img-enter {
@@ -220,4 +238,12 @@
     }
   }
 
+  @keyframes v-img-loading {
+    0% {
+      transform: translate(-50%, -50%, 0) rotate(0deg);
+    }
+    100% {
+      transform: translate(-50%, -50%, 0) rotate(360deg);
+    }
+  }
 </style>

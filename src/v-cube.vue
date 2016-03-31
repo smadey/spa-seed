@@ -125,60 +125,40 @@
 </script>
 
 <style lang="sass">
-  @import './sass-mixins/_mixin.scss';
-
-  @include keyframe(cube-rotate) {
-    0% {
-      @include transform(rotateX(54.5deg) rotateZ(45deg));
-    }
-    20%, 100% {
-      @include transform(rotateX(54.5deg) rotateZ(225deg));
-    }
-  }
-
-  @include keyframe(cube-rotate-reverse) {
-    0% {
-      @include transform(rotateX(54.5deg) rotateZ(225deg));
-    }
-    20%, 100% {
-      @include transform(rotateX(54.5deg) rotateZ(45deg));
-    }
-  }
-
   .v-cube {
     height: 100%;
     margin: auto;
     position: relative;
-    @include transform(rotateX(54.5deg) rotateZ(45deg));
-    @include transform-style(preserve-3d);
+    transform: rotateX(54.5deg) rotateZ(45deg);
+    transform-style: preserve-3d;
     width: 100%;
 
     &.rotating {
-      @include animation(cube-rotate 5s ease-in-out infinite 3s);
+      animation: v-cube-rotate 5s ease-in-out infinite 3s;
     }
 
     &.rotating-reverse {
-      @include animation(cube-rotate-reverse 5s ease-in-out infinite 3s);
+      animation: v-cube-rotate-reverse 5s ease-in-out infinite 3s;
     }
 
     &-inner {
       height: 100%;
       position: absolute;
-      @include transform-style(preserve-3d);
+      transform-style: preserve-3d;
       width: 100%;
 
       & > & {
-        @include transform(rotateZ(-180deg));
+        transform: rotateZ(-180deg);
       }
     }
 
     .face {
-      // @include backface-visibility(hidden);
+      // backface-visibility: hidden;
       background: radial-gradient(transparent 30%, rgba(0, 0, 0, .05) 100%);
       display: block;
       height: 100%;
       position: absolute;
-      @include transition(1s ease-in-out);
+      transition: 1s ease-in-out;
       width: 100%;
 
       &:after {
@@ -189,54 +169,71 @@
         left: -50%;
         height: 200%;
         position: absolute;
-        @include scale(.5);
+        transform: scale(.5);
         top: -50%;
         width: 200%;
       }
     }
 
     .back, .front {
-      @include transform-origin-top(0%);
+      transform-origin: 50% 0%;
     }
 
     .left, .right {
-      @include transform-origin-left(0%);
+      transform-origin: 0% 50%;
     }
 
     .floor {
       background-color: rgba(0, 0, 0, .5);
+      filter: blur(50px);
       height: 100%;
       position: absolute;
-      @include filter(blur(50px));
-      @include translateZ(-50px);
+      transform: translateZ(-50px);
       width: 100%;
     }
 
     .right {
-      @include transition-delay(.3s);
+      transition-delay: .3s;
     }
 
     .back {
-      @include transition-delay(.6s);
+      transition-delay: .6s;
     }
 
     .left {
-      @include transition-delay(.9s);
+      transition-delay: .9s;
     }
 
     .top {
-      @include transition-delay(1.2s);
+      transition-delay: 1.2s;
     }
 
     &.ready {
       .back, .front {
-        @include rotateX(90deg);
+        transform: rotateX(90deg);
       }
 
       .left, .right {
-        @include rotateY(-90deg);
+        transform: rotateY(-90deg);
       }
     }
   }
 
+  @keyframes v-cube-rotate {
+    0% {
+      transform: rotateX(54.5deg) rotateZ(45deg);
+    }
+    20%, 100% {
+      transform: rotateX(54.5deg) rotateZ(225deg);
+    }
+  }
+
+  @keyframes v-cube-rotate-reverse {
+    0% {
+      transform: rotateX(54.5deg) rotateZ(225deg);
+    }
+    20%, 100% {
+      transform: rotateX(54.5deg) rotateZ(45deg);
+    }
+  }
 </style>

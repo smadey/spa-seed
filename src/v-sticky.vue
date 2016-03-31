@@ -90,8 +90,6 @@
 </script>
 
 <style lang="sass">
-  @import './sass-mixins/_mixin.scss';
-
   .v-sticky {
     &-inner {
       z-index: 1;
@@ -107,5 +105,4 @@
       }
     }
   }
-
 </style>

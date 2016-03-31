@@ -77,8 +77,6 @@
 </script>
 
 <style lang="sass">
-  @import '../src/sass-mixins/_mixin.scss';
-
   #v-sticky {
     padding-bottom: 200px;
   }

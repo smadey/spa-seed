@@ -83,8 +83,6 @@
 </script>
 
 <style lang="sass">
-  @import '../src/sass-mixins/_mixin.scss';
-
   #v-cube .cubes {
     height: 200px;
     margin: 30px auto 80px;
