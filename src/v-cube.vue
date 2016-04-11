@@ -19,109 +19,119 @@
 </template>
 
 <script>
-  import {_} from 'ylib'
+  import { _ } from 'ylib';
 
   export default {
     props: {
       size: {
-        type: Number
+        type: Number,
       },
       length: {
-        type: Number
+        type: Number,
       },
       width: {
-        type: Number
+        type: Number,
       },
       height: {
-        type: Number
+        type: Number,
       },
       initialized: {
         type: Boolean,
-        default: false
+        default: false,
       },
       animation: {
-        type: String
+        type: String,
       },
       floor: {
         type: Boolean,
-        default: false
-      }
+        default: false,
+      },
     },
-    data () {
+
+    data() {
       return {
-        ready: false
-      }
+        ready: false,
+      };
     },
+
     computed: {
-      cubeClass () {
+      cubeClass() {
         return {
-          'ready': this.ready,
-          'rotating': this.animation === 'rotating',
-          'rotating-reverse': this.animation === 'rotating-reverse'
-        }
+          ready: this.ready,
+          rotating: this.animation === 'rotating',
+          'rotating-reverse': this.animation === 'rotating-reverse',
+        };
       },
 
-      cubeStyle () {
+      cubeStyle() {
         return {
           height: `${this.width}px`,
-          width: `${this.length}px`
-        }
+          width: `${this.length}px`,
+        };
       },
 
-      innerStyle () {
+      innerStyle() {
         return {
-          transform: `translateZ(-${this.height / 2}px)`
-        }
+          transform: `translateZ(-${this.height / 2}px)`,
+        };
       },
 
-      lrStyle () {
-        if (this.ready) {
-          return {
-            width: `${this.height}px`
-          }
+      lrStyle() {
+        if (!this.ready) {
+          return null;
         }
+
+        return {
+          width: `${this.height}px`,
+        };
       },
 
-      bfStyle () {
-        if (this.ready) {
-          return {
-            height: `${this.height}px`
-          }
+      bfStyle() {
+        if (!this.ready) {
+          return null;
         }
+
+        return {
+          height: `${this.height}px`,
+        };
       },
 
-      topStyle () {
-        if (this.ready) {
-          return {
-            transform: `translateZ(${this.height}px)`
-          }
+      topStyle() {
+        if (!this.ready) {
+          return null;
         }
-      }
+
+        return {
+          transform: `translateZ(${this.height}px)`,
+        };
+      },
     },
-    ready () {
+
+    ready() {
       if (this.size) {
-        this.length = this.width = this.height = this.size
+        this.length = this.width = this.height = this.size;
       }
 
       if (!this.length) {
-        this.length = this.$el.clientWidth
+        this.length = this.$el.clientWidth;
       }
 
       if (!this.width) {
-        this.width = this.$el.clientHeight
+        this.width = this.$el.clientHeight;
       }
 
       if (!this.height) {
-        this.height = Math.min(this.width, this.length)
+        this.height = Math.min(this.width, this.length);
       }
 
       if (this.initialized) {
-        this.ready = true
+        this.ready = true;
       } else {
-        _.asap(() => this.ready = true)
+        _.asap(() => (this.ready = true));
       }
-    }
-  }
+    },
+
+  };
 </script>
 
 <style lang="sass">

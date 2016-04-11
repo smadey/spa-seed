@@ -15,36 +15,38 @@
     props: {
       type: {
         type: String,
-        required: true
+        required: true,
       },
       size: {
-        type: Number
-      }
+        type: Number,
+      },
     },
 
-    data () {
+    data() {
       return {
         types: {
           bubbles: Array(12),
           circles: Array(12),
-          waves: Array(5)
-        }
-      }
+          waves: Array(5),
+        },
+      };
     },
 
     computed: {
-      spinnerStyle () {
+      spinnerStyle() {
         if (!this.size) {
-          return
+          return null;
         }
 
         return {
-          'height': this.size + 'px',
-          'width': this.size + 'px'
-        }
-      }
-    }
-  }
+          height: `${this.size}px`,
+          width: `${this.size}px`,
+        };
+      },
+
+    },
+
+  };
 </script>
 
 <style lang="sass">

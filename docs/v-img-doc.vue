@@ -73,13 +73,13 @@
 </template>
 
 <script>
-  import vImg from '../src/v-img.vue'
+  import vImg from '../src/v-img.vue';
 
   export default {
     components: {
-      vImg
-    }
-  }
+      vImg,
+    },
+  };
 </script>
 
 <style lang="sass">

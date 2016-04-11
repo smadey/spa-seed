@@ -7,86 +7,94 @@
 </template>
 
 <script>
-  import {_, $} from 'ylib'
-  import {domEventDestroyers} from './vue-mixins/index'
+  import { _, $ } from 'ylib';
+
+  import { domEventDestroyers } from './mixins';
 
   export default {
     mixins: [domEventDestroyers],
+
     props: {
       top: {
         type: Number,
-        default: 0
-      }
+        default: 0,
+      },
     },
-    data () {
-      return {
-        stoped: false
-      }
-    },
-    ready () {
-      let scrollFn = _.throttle(this.onScroll, 1000 / 60)
 
-      $(window).on('scroll', scrollFn)
+    data() {
+      return {
+        stoped: false,
+      };
+    },
+
+    ready() {
+      const scrollFn = _.throttle(this.onScroll, 1000 / 60);
+
+      $(window).on('scroll', scrollFn);
 
       this.addDomEventDestroyer('windowScroll', () => {
-        $(window).off('scroll', scrollFn)
-      })
+        $(window).off('scroll', scrollFn);
+      });
     },
+
     events: {
-      'sticky.stop' () {
-        this.stop()
+      'sticky.stop'() {
+        this.stop();
       },
-      'sticky.resume' () {
-        this.resume()
-      }
+      'sticky.resume'() {
+        this.resume();
+      },
     },
+
     methods: {
-      setUnfixed () {
-        let $inner = $(this.$els.inner)
+      setUnfixed() {
+        const $inner = $(this.$els.inner);
 
         if ($inner.css('position') !== 'static') {
-          $inner.css({position: '', top: '', width: ''})
-          this.$dispatch('unfixed')
+          $inner.css({ position: '', top: '', width: '' });
+          this.$dispatch('unfixed');
         }
       },
 
-      setFixed () {
-        let $inner = $(this.$els.inner)
+      setFixed() {
+        const $inner = $(this.$els.inner);
 
-        if ($inner.css('top') !== (this.top + 'px')) {
-          $inner.css({position: 'fixed', top: this.top, width: $inner.width()})
-          this.$dispatch('fixed')
+        if ($inner.css('top') !== `${this.top}px`) {
+          $inner.css({ position: 'fixed', top: this.top, width: $inner.width() });
+          this.$dispatch('fixed');
         }
       },
 
-      stop () {
-        this.stoped = true
+      stop() {
+        this.stoped = true;
       },
 
-      resume () {
-        this.stoped = false
+      resume() {
+        this.stoped = false;
       },
 
-      onScroll () {
+      onScroll() {
         if (this.stoped) {
-          return
+          return;
         }
 
-        let $window = $(window)
+        const $window = $(window);
 
-        let $el = $(this.$el)
-        let $inner = $(this.$els.inner)
+        const $el = $(this.$el);
+        const $inner = $(this.$els.inner);
 
-        $el.height($inner.height())
+        $el.height($inner.height());
 
         if ($el.offset().top - $window.scrollTop() > this.top) {
-          this.setUnfixed()
+          this.setUnfixed();
         } else {
-          this.setFixed()
+          this.setFixed();
         }
-      }
-    }
-  }
+      },
+
+    },
+
+  };
 </script>
 
 <style lang="sass">

@@ -45,13 +45,13 @@
 </template>
 
 <script>
-  import vSpinner from '../src/v-spinner.vue'
+  import vSpinner from '../src/v-spinner.vue';
 
   export default {
     components: {
-      vSpinner
-    }
-  }
+      vSpinner,
+    },
+  };
 </script>
 
 <style lang="sass">

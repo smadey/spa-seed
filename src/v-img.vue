@@ -5,162 +5,171 @@
 
     <template v-if="!loading && loaded">
       <img v-if="adaptive" v-bind:src="src" transition="img" alt="">
-      <div class="img" v-if="!adaptive" transition="img" v-bind:style="[imgSize, imgStyle]"></div>
+      <div class="img" v-if="!adaptive" transition="img"
+        v-bind:style="[imgSize, imgStyle]"></div>
     </template>
   </div>
 </template>
 
 <script>
-  import {_, $} from 'ylib'
-  import {domEventDestroyers} from './vue-mixins/index'
+  import { _, $ } from 'ylib';
 
-  import vSpinner from './v-spinner.vue'
+  import { domEventDestroyers } from './mixins';
+
+  import vSpinner from './v-spinner.vue';
 
   export default {
     mixins: [domEventDestroyers],
+
     components: {
-      vSpinner
+      vSpinner,
     },
+
     props: {
       src: {
         type: String,
-        required: true
+        required: true,
       },
       adaptive: {
         type: Boolean,
-        default: false
+        default: false,
       },
       width: {
-        type: Number
+        type: Number,
       },
       height: {
-        type: Number
+        type: Number,
       },
       lazy: {
         type: Boolean,
-        default: false
+        default: false,
       },
       threshold: {
         type: Number,
-        default: 50
+        default: 50,
       },
       spinnerSize: {
         type: Number,
-        default: 50
-      }
+        default: 50,
+      },
     },
-    data () {
+
+    data() {
       return {
         loading: false,
         loaded: false,
         error: false,
-        cache: false
-      }
+        cache: false,
+      };
     },
+
     computed: {
-      imgClass () {
+      imgClass() {
         return {
           'v-img-loading': this.loading,
           'v-img-loaded': !this.loading && this.loaded,
           'v-img-error': !this.loading && this.error,
-          'v-img-cache': this.cache
-        }
+          'v-img-cache': this.cache,
+        };
       },
 
-      imgSize () {
+      imgSize() {
         if (this.adaptive) {
-          return
+          return null;
         }
 
-        let style = {}
+        const style = {};
 
         if (this.width > 0) {
-          style.width = this.width + 'px'
+          style.width = `${this.width}px`;
         }
 
         if (this.height > 0) {
-          style.height = this.height + 'px'
+          style.height = `${this.height}px`;
         }
 
-        return style
+        return style;
       },
 
-      imgStyle () {
+      imgStyle() {
         return {
-          'background-image': `url("${this.src}")`
-        }
+          'background-image': `url("${this.src}")`,
+        };
       },
 
-      computedSpinnerStyle () {
-        var spinnerSize = this.spinnerSize
+      computedSpinnerStyle() {
+        let spinnerSize = this.spinnerSize;
 
-        spinnerSize = Math.min(spinnerSize, $(this.$el).width() * 0.8)
-        spinnerSize = Math.min(spinnerSize, $(this.$el).height() * 0.8)
+        spinnerSize = Math.min(spinnerSize, $(this.$el).width() * 0.8);
+        spinnerSize = Math.min(spinnerSize, $(this.$el).height() * 0.8);
 
-        return spinnerSize
-      }
+        return spinnerSize;
+      },
     },
     watch: {
-      src () {
-        this.load()
-      }
+      src() {
+        this.load();
+      },
     },
-    ready () {
+    ready() {
       if (this.lazy) {
-        let scrollFn = _.throttle(this.onScroll, 200)
+        const scrollFn = _.throttle(this.onScroll, 200);
 
-        $(window).on('scroll', scrollFn)
+        $(window).on('scroll', scrollFn);
 
         this.addDomEventDestroyer('windowScroll', () => {
-          $(window).off('scroll', scrollFn)
-        })
+          $(window).off('scroll', scrollFn);
+        });
       } else {
-        this.load()
+        this.load();
       }
     },
 
     methods: {
-      load (isForce) {
-        this.error = false
+      load(isForce) {
+        this.error = false;
 
-        let img = document.createElement('img')
-        img.src = this.src
+        let img = document.createElement('img');
+        img.src = this.src;
 
         if (img.complete && !isForce) {
-          this.loading = false
-          this.loaded = true
+          this.loading = false;
+          this.loaded = true;
 
-          this.cache = true
-          this.onSuccess()
+          this.cache = true;
+          this.onSuccess();
         } else {
-          this.loading = true
-          this.loaded = false
+          this.loading = true;
+          this.loaded = false;
 
-          img.onload = this.onSuccess.bind(this)
-          img.onerror = this.onError.bind(this)
+          img.onload = this.onSuccess.bind(this);
+          img.onerror = this.onError.bind(this);
         }
 
-        img = null
+        img = null;
       },
 
-      onSuccess () {
-        this.loading = false
-        this.loaded = true
+      onSuccess() {
+        this.loading = false;
+        this.loaded = true;
       },
 
-      onError () {
-        this.loading = false
-        this.error = true
+      onError() {
+        this.loading = false;
+        this.error = true;
       },
 
-      onScroll () {
-        if (!this.loading && !this.loaded && !this.error && $(this.$el).isInViewport(this.threshold)) {
-          this.execDomEventDestroyer('windowScroll')
-          this.load()
+      onScroll() {
+        if (!this.loading && !this.loaded && !this.error
+          && $(this.$el).isInViewport(this.threshold)) {
+          this.execDomEventDestroyer('windowScroll');
+          this.load();
         }
-      }
-    }
-  }
+      },
+
+    },
+
+  };
 </script>
 
 <style lang="sass">

@@ -27,42 +27,26 @@ module.exports = {
   module: {
     preLoaders: [
       {
-        test: /\.vue$/,
+        test: /\.jsx?$/,
         loader: 'eslint-loader',
         include: [
           path.join(__dirname, 'src'),
-          path.join(__dirname, 'docs')
-        ]
-      },
-      {
-        test: /\.js$/,
-        loader: 'eslint-loader',
-        include: [
-          path.join(__dirname, 'src'),
-          path.join(__dirname, 'docs')
+          path.join(__dirname, 'docs'),
         ]
       }
     ],
     loaders: [
       {
-        test: /\.vue$/,
-        loader: 'vue-loader'
-      },
-      {
-        test: /\.css$/,
-        loader: 'style-loader!css-loader!postcss-loader?root=./docs/'
-      },
-      {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         loader: 'babel-loader',
         include: [
           path.join(__dirname, 'src'),
-          path.join(__dirname, 'docs')
+          path.join(__dirname, 'docs'),
         ],
-        query: {
-          presets: ['es2015', 'stage-2'],
-          plugins: ['transform-runtime']
-        }
+      },
+      {
+        test: /\.css$/,
+        loader: 'style-loader!css-loader!postcss-loader?root=./src/'
       },
       {
         test: /\.json$/,
@@ -75,7 +59,11 @@ module.exports = {
           limit: 10000,
           name: '[name].[ext]?[hash]'
         }
-      }
+      },
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader'
+      },
     ]
   },
   devServer: {
@@ -88,7 +76,12 @@ module.exports = {
   },
   postcss: function () {
     return [require('autoprefixer')({ browsers: AUTOPREFIXER_BROWSERS }), require('precss')];
-  }
+  },
+  vue: {
+    loaders: {
+      js: 'babel-loader!eslint-loader?`{rules:{eol-last:0}}`'
+    }
+  },
 }
 
 if (process.env.NODE_ENV === 'production') {

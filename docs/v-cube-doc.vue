@@ -73,13 +73,13 @@
 </template>
 
 <script>
-  import vCube from '../src/v-cube.vue'
+  import vCube from '../src/v-cube.vue';
 
   export default {
     components: {
-      vCube
-    }
-  }
+      vCube,
+    },
+  };
 </script>
 
 <style lang="sass">

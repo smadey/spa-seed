@@ -50,30 +50,28 @@
 </template>
 
 <script>
-  import vSticky from '../src/v-sticky.vue'
+  import vSticky from '../src/v-sticky.vue';
 
   export default {
     components: {
-      vSticky
+      vSticky,
     },
     methods: {
-      onFixed () {
-        console.log('fixed')
+      onFixed() {
       },
 
-      onUnfixed () {
-        console.log('unfixed')
+      onUnfixed() {
       },
 
-      stop () {
-        this.$broadcast('sticky.stop')
+      stop() {
+        this.$broadcast('sticky.stop');
       },
 
-      resume () {
-        this.$broadcast('sticky.resume')
-      }
-    }
-  }
+      resume() {
+        this.$broadcast('sticky.resume');
+      },
+    },
+  };
 </script>
 
 <style lang="sass">
