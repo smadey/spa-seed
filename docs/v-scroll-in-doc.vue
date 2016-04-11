@@ -1,7 +1,7 @@
 <template>
   <div id="v-scroll-in" class="bs-docs-section">
     <h1 class="page-header">
-      <a href="#v-scroll-in" class="anchor">V-ScrollIn</a>
+      <a href="#v-scroll-in" class="anchor">V-Scroll-In</a>
     </h1>
 
     <div class="bs-example">
