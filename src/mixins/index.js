@@ -1,5 +1,7 @@
-import domEventDestroyers from './domEventDestroyers';
+// import domEventDestroyers from './domEventDestroyers';
+import eventMixin from './eventMixin';
 
 export {
-  domEventDestroyers,
+  // domEventDestroyers,
+  eventMixin,
 };

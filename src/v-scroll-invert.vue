@@ -15,10 +15,10 @@
   import $ from 'jquery';
   import _ from 'lodash';
 
-  import { domEventDestroyers } from './mixins';
+  import { eventMixin } from './mixins';
 
   export default {
-    mixins: [domEventDestroyers],
+    mixins: [eventMixin],
 
     props: {
       initColor: {
@@ -34,14 +34,7 @@
     },
 
     ready() {
-      const scrollFn = _.throttle(this.onScroll, 1000 / 60);
-
-      $(window).on('scroll', scrollFn);
-
-      this.addDomEventDestroyer('windowScroll', () => {
-        $(window).off('scroll', scrollFn);
-      });
-
+      this.on(window, 'scroll', _.throttle(this.onScroll, 1000 / 60));
       this.setColors(this.originColor, this.originColor);
     },
 

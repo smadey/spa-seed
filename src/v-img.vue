@@ -14,12 +14,12 @@
 <script>
   import { _, $ } from 'ylib';
 
-  import { domEventDestroyers } from './mixins';
+  import { eventMixin } from './mixins';
 
   import vSpinner from './v-spinner.vue';
 
   export default {
-    mixins: [domEventDestroyers],
+    mixins: [eventMixin],
 
     components: {
       vSpinner,
@@ -113,13 +113,7 @@
     },
     ready() {
       if (this.lazy) {
-        const scrollFn = _.throttle(this.onScroll, 200);
-
-        $(window).on('scroll', scrollFn);
-
-        this.addDomEventDestroyer('windowScroll', () => {
-          $(window).off('scroll', scrollFn);
-        });
+        this.on(window, 'scroll', _.throttle(this.onScroll, 200));
       } else {
         this.load();
       }
@@ -162,7 +156,7 @@
       onScroll() {
         if (!this.loading && !this.loaded && !this.error
           && $(this.$el).isInViewport(this.threshold)) {
-          this.execDomEventDestroyer('windowScroll');
+          this.off(window, 'scroll');
           this.load();
         }
       },

@@ -9,10 +9,10 @@
 <script>
   import { _, $ } from 'ylib';
 
-  import { domEventDestroyers } from './mixins';
+  import { eventMixin } from './mixins';
 
   export default {
-    mixins: [domEventDestroyers],
+    mixins: [eventMixin],
 
     props: {
       top: {
@@ -28,13 +28,7 @@
     },
 
     ready() {
-      const scrollFn = _.throttle(this.onScroll, 1000 / 60);
-
-      $(window).on('scroll', scrollFn);
-
-      this.addDomEventDestroyer('windowScroll', () => {
-        $(window).off('scroll', scrollFn);
-      });
+      this.on(window, 'scroll', _.throttle(this.onScroll, 1000 / 60));
     },
 
     events: {
