@@ -91,6 +91,7 @@
     }
 
     textarea {
+      -webkit-appearance: none;
       border: 1px solid #d6d7dc;
       border-radius: 3px;
       display: block;
@@ -106,6 +107,7 @@
     }
 
     input[type="submit"] {
+      -webkit-appearance: none;
       background: #46c6fe;
       border: 0;
       border-radius: 3px;
