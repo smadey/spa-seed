@@ -60,12 +60,12 @@
     width: 100%;
 
     &-inner {
-      height: 60px;
+      height: 50px;
       left: 50%;
       position: absolute;
       transform: translate3d(-50%, -50%, 0);
       top: 50%;
-      width: 60px;
+      width: 50px;
     }
 
     &-bubbles,

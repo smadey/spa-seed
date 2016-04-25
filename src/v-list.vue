@@ -1,8 +1,8 @@
 <template>
   <div class="v-list">
-    <div class="list-loading" v-if="loading" >
-      <v-spinner type="bubbles" v-bind:size="40"></v-spinner>
-    </div>
+    <!-- <div class="list-loading" v-if="loading" >
+      <v-spinner type="bubbles"></v-spinner>
+    </div> -->
     <div class="list-nodata" v-if="nodata">
       <solt name="nodata"></solt>
     </div>
@@ -192,7 +192,9 @@
           if (this.offset) {
             if (this.opposite) {
               this.items = list.concat(this.items);
-              this.calcOppositeScrollTop();
+              this.$nextTick(() => {
+                this.calcOppositeScrollTop();
+              });
             } else {
               this.items = this.items.concat(list);
             }
