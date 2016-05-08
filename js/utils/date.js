@@ -62,14 +62,12 @@ export function dateFormat(obj, format = 'YYYY-MM-DD HH:mm:ss') {
     dateStr = dateStr.replace(RegExp.$1, '日一二三四五六七'.split('')[date.getDay()]);
   }
 
-  let k;
-
-  for (k in o) {
+  Object.keys(o).forEach((k) => {
     if (new RegExp(`(${k})`).test(dateStr)) {
       dateStr = dateStr.replace(RegExp.$1,
-        RegExp.$1.length === 1 ? o[k] : (`00${o[k]}`).substr((`${o[k]}`).length));
+        RegExp.$1.length === 1 ? o[k] : `00${o[k]}`.substr(`${o[k]}`.length));
     }
-  }
+  });
 
   return dateStr;
 }
