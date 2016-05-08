@@ -7,7 +7,7 @@
     "dev": "webpack-dev-server --inline --hot --port 8080",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
     "init": "npm run clear:libs && npm run init:libs",
-    "clear:libs": "git rm -r lib-core && git rm -r lib-components && git add . && git commit -m \"Remove libs for init\"",
+    "clear:libs": "rm -rf lib-core && rm -rf lib-components && git add . && git commit -m \"Remove libs for init\"",
     "init:libs": "npm run init:core && npm run init:components",
     "init:core": "git remote add -f remote-lib-core https://github.com/smadey/lib-core && git subtree add --prefix=lib-core remote-lib-core master",
     "init:components": "git remote add -f remote-lib-components https://github.com/smadey/vue-components && git subtree add --prefix=lib-components remote-lib-components master",
